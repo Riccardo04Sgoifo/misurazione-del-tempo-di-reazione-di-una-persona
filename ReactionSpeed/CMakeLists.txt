@@ -22,16 +22,22 @@ set (SOURCES
 set (HEADERS
     mainlogic.h
     mainlogicworker.h
+    macros.h
 )
 
 qt6_add_resources(SHADER_RSC_ADDED
     Shaders.qrc
 )
 
+qt6_add_resources(IMAGES_RSC_ADDED
+    Images.qrc
+)
+
 qt_add_executable(appReactionSpeed
     ${SOURCES}
     ${HEADERS}
     ${SHADER_RSC_ADDED}
+    ${IMAGES_RSC_ADDED}
 )
 
 qt_add_qml_module(appReactionSpeed

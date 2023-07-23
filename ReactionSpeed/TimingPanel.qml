@@ -4,8 +4,6 @@ import Basic
 import QtQuick.Layouts
 
 ColumnLayout {
-    Layout.fillWidth: true
-    Layout.fillHeight: true
 
     RowLayout {
         id: timingModeBarNText
@@ -47,10 +45,16 @@ ColumnLayout {
     SwipeView {
         id: timingModePanels
         currentIndex: timingModeBar.currentIndex
-        Layout.fillHeight: true
+
         Layout.fillWidth: true
+        Layout.maximumHeight: 100
+        height: randomModeText.height + randomFromSpinBox.height + 10
+        Layout.alignment: Qt.AlignTop
+
 
         clip: true
+
+
 
         Item {
             id: fixedModeTab
@@ -58,14 +62,23 @@ ColumnLayout {
             //Layout.fillHeight: true
             width: timingModePanels.width
             height: timingModePanels.height
+            anchors.margins: 5
 
+            Rectangle {
+                anchors.fill: parent
+                color: "#272727"
+                radius: 10
+            }
             ColumnLayout {
                 anchors.fill: parent
+
+                anchors.margins: 5
 
                 RowLayout {
 
                     Layout.fillWidth: true
                     Layout.fillHeight: true
+                    Layout.alignment: Qt.AlignTop
 
                     SText {
                         text: "Intervallo di:"
@@ -100,6 +113,10 @@ ColumnLayout {
 
                 CheckBox {
 
+                    Layout.alignment: Qt.AlignTop
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
                     id: noTimeCheckBox
 
                     text: "Senza intervallo"
@@ -133,14 +150,29 @@ ColumnLayout {
             width: timingModePanels.width
             height: timingModePanels.height
 
+            anchors.margins: 5
+
+            Rectangle {
+                anchors.fill: parent
+                color: "#272727"
+                radius: 10
+            }
+
             ColumnLayout {
                 anchors.fill: parent
 
+                anchors.margins: 5
+
                 SText {
+                    id: randomModeText
                     text: "Intervallo casuale da"
+                    Layout.alignment: Qt.AlignTop
                 }
 
                 RowLayout {
+
+                    Layout.alignment: Qt.AlignTop
+
                     id: randomSpinBox
 
                     function setUsedValue() {
@@ -148,8 +180,6 @@ ColumnLayout {
                         mainLogic.setRandomIntervalTo(randomToSpinBox.value);
                     }
 
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
 
                     SSpinBox {
 

@@ -24,11 +24,16 @@ class MainLogic : public QObject
     Q_PROPERTY(QList<QString> availableSerialPorts READ availableSerialPorts WRITE setAvailableSerialPorts NOTIFY availableSerialPortsChanged);
     Q_PROPERTY(QString currentSerialPort READ currentSerialPort WRITE setCurrentSerialPort NOTIFY currentSerialPortChanged);
     Q_PROPERTY(QString currentSerialPortDescription READ currentSerialPortDescription WRITE setCurrentSerialPortDescription NOTIFY currentSerialPortDescriptionChanged);
+    Q_PROPERTY(QString scoreBoardText READ scoreBoardText WRITE setScoreBoardText NOTIFY scoreBoardTextChanged);
+    Q_PROPERTY(bool isConnected READ isConnected WRITE setIsConnected NOTIFY isConnectedChanged);
 
 
 
 private:
     // variables
+
+    MainLogicWorker *worker;
+
     int lightNumber = 4;
     int startDelay_m = 3000;
     int attemptNum_m = 10;
@@ -46,6 +51,12 @@ private:
 
 
     QString m_currentSerialPortDescription;
+
+    QString m_scoreBoardText;
+
+    bool m_isConnected = false;
+
+
 
 public:
 
@@ -71,6 +82,12 @@ public:
     QString currentSerialPortDescription() const;
 
 
+    QString scoreBoardText() const;
+
+
+    bool isConnected() const;
+
+
 public slots:
     void startAttempts();
     void connectPort();
@@ -89,6 +106,11 @@ public slots:
 
     void requestOpenErrorDialog(QString error) {emit errorDialogRequested(error); }
 
+    void setScoreBoardText(const QString newScoreBoardText);
+    void appendScoreBoardTextLine(const QString line);
+    void clearScoreBoardText();
+    void setIsConnected(bool newIsConnected);
+    void stopAttempts() { worker->shallStop = true; }
 
 signals:
     void lightNumChanged(int value);
@@ -107,6 +129,9 @@ signals:
     void currentSerialPortDescriptionChanged(QString value);
 
     void errorDialogRequested(QString error);
+    void scoreBoardTextChanged(QString value);
+    void isConnectedChanged(bool value);
+
 };
 
 #endif // MAINLOGIC_H

@@ -81,7 +81,7 @@ void main() {
 
         vec2 cv = fv;
         cv.x += float(x) / n * n * oneScale;
-        if (int(iv.x) - x == int(activeLight)){
+        if (int(iv.x) - x == int(activeLight - 0.1)){ // - 0.1 ensures 0.0 gets treated as a -1
 
             color += vec3(0.000,0.940,0.240) * vec3(ball(cv));
         }

@@ -11,3 +11,4 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QString>
+#include <QLocale>

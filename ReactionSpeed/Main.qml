@@ -10,18 +10,22 @@ ApplicationWindow {
     id: mainWindow
 
     width: 640
-    height: 480
-    minimumWidth: 860
+    height: 540
+    minimumWidth: 960
     minimumHeight: 480
     visible: true
     title: qsTr("Hello World")
 
     font.pointSize: 12
 
+    onClosing: {
+        mainLogic.stopAttempts();
+    }
+
     Connections {
         target: mainLogic;
         function onErrorDialogRequested(error) {
-            errorDialog.open(error);
+            errorDialog.openDialog(error);
         }
     }
 
@@ -123,44 +127,62 @@ ApplicationWindow {
         }
     }
 
-    GridLayout {
+    Item {
         id: mainGrid
-        rows: 2
-        columns: 2
         anchors.fill: parent
-        columnSpacing: 5
         anchors.margins: 5
+
+
 
 
         LightCanvas {
             id: canvas
-            Layout.row: 0; Layout.column: 0
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            anchors.top: parent.top
+            anchors.right: controlPanel.left
+            anchors.bottom: scoreTable.top
+            anchors.left: parent.left
+
             Layout.minimumWidth: 640
             Layout.maximumHeight: 600
+            Layout.minimumHeight: controlPanel.height
             color: "#ffffff"
         }
 
 
-       ColumnLayout {
+       Item {
             id: controlPanel
-            Layout.maximumHeight: 600
-            Layout.maximumWidth: 400
-            Layout.alignment: Qt.AlignTop
-            Layout.margins: 5
-            spacing: 5
+            height: 320
+            width: 300
+
+
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.bottom: scoreTable.top
+
+
+
+            anchors.margins: 5
+            anchors.rightMargin: 0
 
             RowLayout {
                 id: startPanel
-                Layout.fillWidth: true
-                Layout.fillHeight: true
+
+                anchors.top: parent.top
+                anchors.left: parent.left
+
 
                 Button {
                     text: "Inizia"
+
+                    enabled: mainLogic.isConnected
+
                     onClicked: {
                         mainLogic.startAttempts();
                     }
+
+                    ToolTip.visible: hovered && !enabled
+                    ToolTip.delay: 100
+                    ToolTip.text: "connetti la scheda prima di iniziare"
                 }
 
                 SText {
@@ -187,7 +209,10 @@ ApplicationWindow {
             RowLayout {
                 id: attemptsPanel
                 Layout.fillWidth: true
-                Layout.fillHeight: true
+
+                //Layout.alignment: Qt.AlignTop || Qt.AlignBottom
+                anchors.top: startPanel.bottom
+
 
                 SText {
                     text: "numero di tentativi:"
@@ -209,13 +234,17 @@ ApplicationWindow {
 
             TimingPanel {
                 id: timingPanel
+                anchors.top: attemptsPanel.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
             }
 
             RowLayout {
                 id: lightNumPanel
 
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+                anchors.top: timingPanel.bottom
+                anchors.topMargin: 10
+
 
                 SText {
                     text: "numero di sensori: "
@@ -234,10 +263,11 @@ ApplicationWindow {
             }
 
             RowLayout {
+
                 id: noRepetitions
 
-                Layout.fillHeight: true
-                Layout.fillWidth: true
+                anchors.top: lightNumPanel.bottom
+
 
 
                 CheckBox {
@@ -251,10 +281,39 @@ ApplicationWindow {
                 }
             }
 
+            RowLayout {
+
+                id: stopButtonLayout
+
+                anchors.top: noRepetitions.bottom
+                anchors.left: parent.left
+                anchors.right: parent.right
+
+                DelayButton {
+                    delay: 400
+                    text: "Interrompi"
+
+                    Layout.fillWidth: true
+
+                    onActivated: {
+                        mainLogic.stopAttempts();
+                    }
+                }
+            }
+
         }
 
         ScoreTable {
-            id: scoreLayout
+
+            anchors.topMargin: 5
+
+            anchors.right: controlPanel.left
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            anchors.top: controlPanel.bottom
+
+
+            id: scoreTable
         }
 
     }

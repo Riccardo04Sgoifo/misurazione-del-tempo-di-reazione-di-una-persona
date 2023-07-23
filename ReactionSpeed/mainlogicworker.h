@@ -1,7 +1,7 @@
 #ifndef MAINLOGICWORKER_H
 #define MAINLOGICWORKER_H
 
-#include <QThread.h>
+#include <qthread.h>
 #include <QObject>
 #include <QRandomGenerator>
 #include <QList>
@@ -9,6 +9,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QString>
+#include <QLocale>
+#include <macros.h>
 //#include <QtWidgets/QMessageBox>
 
 #define MAX_STEPS 1000
@@ -25,6 +27,7 @@ private:
 
     bool noReps = false;
 
+
     QList<QString> availableSerialPorts = {};
     QList<QString> availableSerialPortsDescription = {};
 
@@ -33,13 +36,19 @@ private:
 
     QSerialPort *serial;
 
-    virtual ~MainLogicWorker();
+    bool isConnected = false;
+
+    QByteArray getMessage(char command, unsigned int from, unsigned int to, char mode, unsigned int attempts, unsigned int sensors);
+
+
 
 
 public:
     explicit MainLogicWorker(QObject *parent = nullptr);
 
+    virtual ~MainLogicWorker();
 
+    bool shallStop = false; // is there a better way?
 
 
 public slots:
@@ -56,6 +65,7 @@ public slots:
 
 
 
+
 signals:
     void lightChanged(int value);
     void attemptNumChanged(int value);
@@ -66,6 +76,11 @@ signals:
     void availableSerialPortsChanged(QList<QString> value);
     void currentSerialPortsDescriptionChanged(QString value);
     void requestOpenErrorDialog(QString reason);
+
+    void appendScoreBoardTextLine(const QString line);
+    void clearScoreBoardText();
+
+    void isConnectedChanged(bool value);
 
 
 };
