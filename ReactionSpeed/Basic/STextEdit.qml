@@ -4,4 +4,7 @@ TextEdit {
     color: "#ffffff"
     font.pointSize: 12
 
+    height: contentHeight
+
+
 }

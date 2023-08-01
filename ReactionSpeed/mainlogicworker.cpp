@@ -8,6 +8,14 @@ void MainLogicWorker::setNoReps(bool newNoReps)
     noReps = newNoReps;
 }
 
+void MainLogicWorker::setCurrentStimulationMode(QString value)
+{
+    if (value == currentStimulationMode) {
+        return;
+    }
+    currentStimulationMode = value;
+}
+
 void MainLogicWorker::setCurrentSerialPort(QString value)
 {
     if(value == currentSerialPort){
@@ -110,6 +118,40 @@ QByteArray MainLogicWorker::getMessage(char command, unsigned int from, unsigned
     return message;
 }
 
+
+void MainLogicWorker::attemptFinished()
+{
+    emit lightChanged(-1);
+    // for backUp and to make the listView work
+
+    float mean = 0;
+
+    for (int i = 0; i < currentAttempts.size(); i++) {
+        mean += currentAttempts[i];
+    }
+
+    mean /= (float)currentAttempts.size();
+
+    emit requestSaveAttempt(currentAttempts, (int)mean);
+    // enables start button and disables stop button
+    emit isRunningChanged(true);
+}
+
+char MainLogicWorker::getStimulationModeForMessage(){
+
+
+    if (QList<QString> {"Visual", "visual", "V", "v"}.indexOf(currentStimulationMode) >= 0 ){
+        return STIMULATION_MODE_VISUAL;
+    }
+    if (QList<QString> {"Auditory", "auditory", "A", "a"}.indexOf(currentStimulationMode) >= 0 ){
+        return STIMULATION_MODE_VISUAL;
+    }
+
+    // default
+    return STIMULATION_MODE_BOTH;
+
+}
+
 void MainLogicWorker::doWork()
 {
 
@@ -126,7 +168,7 @@ void MainLogicWorker::doWork()
 
     QThread::msleep(startDelay);
 
-    const QByteArray dataToSendBytes = getMessage(START_LOOP, randomIntervalFrom, randomIntervalTo, STIMULATION_MODE_BOTH, attemptNum, 1u);
+    const QByteArray dataToSendBytes = getMessage(START_LOOP, randomIntervalFrom, randomIntervalTo, getStimulationModeForMessage(), attemptNum, 1u);
 
     serial->write(dataToSendBytes);
 
@@ -148,7 +190,10 @@ void MainLogicWorker::doWork()
         return;
     }
 
+    // everything went well up to here so the attempt is started
 
+    // disables start button and enables stop button
+    emit isRunningChanged(false);
 
     bool run = true;
     int i = 0;
@@ -158,7 +203,8 @@ void MainLogicWorker::doWork()
         if (shallStop){
             shallStop = false;
 
-            const QByteArray stopMessageBytes = getMessage(BREAK_LOOP, 0, 0, STIMULATION_MODE_BOTH, 0, 0); // stop
+            // stop, set mode to visual to hopefully stop the noise
+            const QByteArray stopMessageBytes = getMessage(BREAK_LOOP, 0, 0, STIMULATION_MODE_VISUAL, 0, 0);
 
             serial->write(stopMessageBytes);
 
@@ -176,6 +222,8 @@ void MainLogicWorker::doWork()
             if (dataReceived[0] != COPY) { // ok code
                 emit requestOpenErrorDialog("can't stop loop on esp8266");
                 emit appendScoreBoardTextLine(QString(dataReceived));
+                // tell mainLogic that the attempt is finished (not in the best way)
+                attemptFinished();
                 return;
             }
 
@@ -237,7 +285,9 @@ void MainLogicWorker::doWork()
         }
     }
 
-    emit lightChanged(-1);
+    // tell mainLogic that the attempt is finished
+    attemptFinished();
+
 
 }
 

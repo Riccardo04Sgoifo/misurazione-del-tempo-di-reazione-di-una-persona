@@ -12,6 +12,13 @@ Item {
 
     anchors.margins: 5
 
+    function updateStatistics() {
+        meanTextField.relaod();
+        errorTextField.relaod();
+        bestTimeTextField.relaod();
+        topPTextField.relaod();
+    }
+
     ScrollView {
         id: scrollView
 
@@ -20,15 +27,37 @@ Item {
         anchors.bottom: parent.bottom
         anchors.right: statisticsPanel.left
 
+        contentHeight: textEdit.height
 
 
         STextEdit {
-            anchors.fill: parent
+
+            id: textEdit
+
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.right: parent.right
+
             text: mainLogic.scoreBoardText
 
+            height: contentHeight
+
             onTextChanged: {
-                mainLogic.setScoreBoardText(text);
-                scrollView.ScrollBar.vertical.position = 1.0 - scrollView.ScrollBar.vertical.size;
+                if (!focus){
+                    mainLogic.setScoreBoardText(text);
+                    scrollView.ScrollBar.vertical.position = 1.0 - scrollView.ScrollBar.vertical.size;
+                }
+                else {
+                    console.log(cursorRectangle.y );
+                    console.log(contentHeight);
+                    console.log(scrollView.ScrollBar.vertical.visualPosition)
+
+                    if (cursorRectangle.y + cursorRectangle.height > contentHeight * scrollView.ScrollBar.vertical.visualPosition + scrollView.height){
+                        scrollView.ScrollBar.vertical.position = Math.min((cursorRectangle.y) / contentHeight, 1.0 - scrollView.ScrollBar.vertical.size)
+                    }
+
+
+                }
             }
 
             readOnly: false
@@ -67,31 +96,41 @@ Item {
 
             TextField {
 
+                id: meanTextField
+
                 text: "Media: 234ms"
 
+                property int mean: 0
 
-            }
+                function reload() {
+                    var lines = textEdit.text.split("\n");
 
-            Button {
+                    var sum = 0;
+                    var count = 0;
 
-                implicitWidth: height
+                    for (var i = 1; i < lines.length; i++){ // first line is name
+                        if (lines[i] !== ""){
+                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                            if (value !== NaN){
+                                sum += value;
+                                count ++;
+                            }
 
-                text: ""
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
+                        }
+                    }
+                    mean = (Math.floor(sum / count));
 
-
-
-                Image {
-
-                    anchors.centerIn: parent
-                    source: "qrc:///images/reload.png"
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.height: parent.background.height - 6
-                    height: sourceSize.height
-                    verticalAlignment: Image.AlignVCenter
+                    text = "Media: " + String(Math.floor(sum / count)) + "ms";
                 }
 
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+                ToolTip.text: "Media calcolata a partire dalla riga 2"
+            }
 
+
+            SReloadButton {
+                target: meanTextField
             }
 
         }
@@ -109,31 +148,40 @@ Item {
 
             TextField {
 
+                id: errorTextField
+
                 text: "Errori: 3"
 
+                function reload() {
+                    var lines = textEdit.text.split("\n");
 
-            }
+                    var sum = 0;
+                    var count = 0;
+                    var threshold = 1.5
 
-            Button {
+                    for (var i = 1; i < lines.length; i++){ // first line is name
+                        if (lines[i] !== ""){
+                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                            if (value !== NaN){
+                                if (value >= meanTextField.mean * threshold){
+                                    count ++;
+                                }
+                            }
 
-                implicitWidth: height
+                        }
+                    }
 
-                text: ""
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-
-
-                Image {
-
-                    anchors.centerIn: parent
-                    source: "qrc:///images/reload.png"
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.height: parent.background.height - 6
-                    height: sourceSize.height
-                    verticalAlignment: Image.AlignVCenter
+                    text = "Errori: " + String(Math.floor(count));
                 }
 
 
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+                ToolTip.text: "tempi sopra la soglia di 1.5 volte la media"
+            }
+
+            SReloadButton {
+                target: errorTextField
             }
 
         }
@@ -151,31 +199,39 @@ Item {
 
             TextField {
 
+                id: bestTimeTextField
+
                 text: "Tempo migliore: 125ms"
+
+                function reload() {
+                    var lines = textEdit.text.split("\n");
+
+                    var best = Infinity;
+
+                    for (var i = 1; i < lines.length; i++){ // first line is name
+                        if (lines[i] !== ""){
+                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                            if (value !== NaN){
+                                if (value < best){
+                                    best = value;
+                                }
+                            }
+
+                        }
+                    }
+
+                    text = "Migliore: " + String(Math.floor(best)) + "ms";
+                }
+
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+                ToolTip.text: "tempo più basso"
 
 
             }
 
-            Button {
-
-                implicitWidth: height
-
-                text: ""
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-
-
-                Image {
-
-                    anchors.centerIn: parent
-                    source: "qrc:///images/reload.png"
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.height: parent.background.height - 6
-                    height: sourceSize.height
-                    verticalAlignment: Image.AlignVCenter
-                }
-
-
+            SReloadButton {
+                target: bestTimeTextField
             }
 
         }
@@ -184,7 +240,7 @@ Item {
 
         RowLayout {
 
-            id: topPercentageDisplay
+            id: topPDisplay
             anchors.margins: 5
 
             anchors.top: bestTimeDisplay.bottom
@@ -193,31 +249,46 @@ Item {
 
             TextField {
 
+                id: topPTextField
+
                 text: "percentuale miglire: 51%"
+
+                function reload() {
+
+
+                    var scores = mainLogic.getMeans();
+
+                    if (scores.length < 1){
+                        text = "Top P: 100%";
+                    }
+                    else {
+                        var below = 0
+
+                        var mean = meanTextField.mean
+
+                        for (let i = 0; i < scores.length; i++){
+                            if (scores[i] < mean) {
+                                below ++;
+                            }
+                        }
+
+                        var percentile = 1.0 - below / scores.length;
+
+                        text = "Top P: " + String(Math.floor(percentile * 100.0)) + "%";
+                    }
+
+
+                }
+
+                ToolTip.visible: hovered
+                ToolTip.delay: 500
+                ToolTip.text: "percentuale di tempi migliori (media)"
 
 
             }
 
-            Button {
-
-                implicitWidth: height
-
-                text: ""
-                Layout.alignment: Qt.AlignLeft | Qt.AlignVCenter
-
-
-
-                Image {
-
-                    anchors.centerIn: parent
-                    source: "qrc:///images/reload.png"
-                    fillMode: Image.PreserveAspectFit
-                    sourceSize.height: parent.background.height - 6
-                    height: sourceSize.height
-                    verticalAlignment: Image.AlignVCenter
-                }
-
-
+            SReloadButton {
+                target: topPTextField
             }
 
         }

@@ -75,9 +75,15 @@ MainLogic::MainLogic()
     connect(worker, &MainLogicWorker::appendScoreBoardTextLine, this, &MainLogic::appendScoreBoardTextLine);
     connect(worker, &MainLogicWorker::clearScoreBoardText, this, &MainLogic::clearScoreBoardText);
     connect(worker, &MainLogicWorker::isConnectedChanged, this, &MainLogic::setIsConnected);
+    connect(worker, &MainLogicWorker::isRunningChanged, this, &MainLogic::setIsRunning);
+    connect(worker, &MainLogicWorker::requestSaveAttempt, this, &MainLogic::saveAttempt);
+    connect(&saveManager, &SaveManager::attemptNamesChanged, this, &MainLogic::setAttemptNames);
+    connect(this, &MainLogic::attemptNamesChanged, &saveManager, &SaveManager::setAttemptNames);
 
     //connect worker output signal and this slopt handler
     workerThread.start();
+
+    // update qml stuff
 }
 
 MainLogic::~MainLogic()
@@ -90,6 +96,11 @@ MainLogic::~MainLogic()
 
 void MainLogic::startAttempts()
 {
+
+    // starts from 0 so first is 1
+    currentAttemptNum++;
+    currentAttemptName = QString("Tentativo %1").arg(currentAttemptNum);
+
     emit startAttemptsSignal();
 }
 
@@ -193,4 +204,89 @@ void MainLogic::setIsConnected(bool newIsConnected)
         return;
     m_isConnected = newIsConnected;
     emit isConnectedChanged(m_isConnected);
+}
+
+void MainLogic::saveAttempt(QList<int> attempts, int mean)
+{
+    AttemptData data;
+
+
+    data.mean = mean;
+    data.errors = 799999; // +
+    data.meanWithoutErrors = 7; // +
+    data.attemptNum = attempts.size();
+    data.mode = m_currentStimulationMode;
+    data.sensors = lightNumber;
+    data.randomIntervals = randomIntervalFrom_m == randomIntervalTo_m;
+    data.intervalFrom = randomIntervalFrom_m;
+    data.intervalTo = randomIntervalTo_m;
+    data.attempts = attempts;
+
+    currentAttempt = data;
+
+    saveManager.writeAttempt(data, currentAttemptName, m_scoreBoardText);
+}
+
+void MainLogic::saveAttemptText()
+{
+
+    saveManager.writeAttempt(currentAttempt, currentAttemptName, m_scoreBoardText);
+
+    emit attemptNamesChanged(QList<QString> {"papa leone", "amerigo vespucci", "cristofolo colombo"});
+
+}
+
+void MainLogic::saveAll()
+{
+    saveManager.saveRun();
+}
+
+QList<int> MainLogic::getMeans()
+{
+    return saveManager.getMeans();
+}
+
+void MainLogic::loadAttempt(int index)
+{
+    return;
+}
+
+bool MainLogic::isRunning() const
+{
+    return m_isRunning;
+}
+
+void MainLogic::setIsRunning(bool newIsRunning)
+{
+    if (m_isRunning == newIsRunning) {
+        return;
+    }
+    m_isRunning = newIsRunning;
+    emit isRunningChanged(m_isRunning);
+}
+
+QString MainLogic::currentStimulationMode() const
+{
+    return m_currentStimulationMode;
+}
+
+void MainLogic::setCurrentStimulationMode(const QString newCurrentStimulationMode)
+{
+    if (m_currentStimulationMode == newCurrentStimulationMode)
+        return;
+    m_currentStimulationMode = newCurrentStimulationMode;
+    emit currentStimulationModeChanged(newCurrentStimulationMode);
+}
+
+QList<QString> MainLogic::attemptNames() const
+{
+    return m_attemptNames;
+}
+
+void MainLogic::setAttemptNames(const QList<QString> newAttemptNames)
+{
+    if (m_attemptNames == newAttemptNames)
+        return;
+    m_attemptNames = newAttemptNames;
+    emit attemptNamesChanged(newAttemptNames);
 }

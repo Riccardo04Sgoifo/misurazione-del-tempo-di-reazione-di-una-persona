@@ -44,6 +44,12 @@ ApplicationWindow {
                     mainWindow.close();
                 }
             }
+            Action {
+                text: "Salva"
+                onTriggered: {
+                    mainLogic.saveAll();
+                }
+            }
         }
 
         Menu {
@@ -157,7 +163,7 @@ ApplicationWindow {
 
             anchors.top: parent.top
             anchors.right: parent.right
-            anchors.bottom: scoreTable.top
+            //anchors.bottom: scoreTable.top
 
 
 
@@ -174,13 +180,13 @@ ApplicationWindow {
                 Button {
                     text: "Inizia"
 
-                    enabled: mainLogic.isConnected
+                    enabled: mainLogic.isConnected && !mainLogic.isRunning
 
                     onClicked: {
                         mainLogic.startAttempts();
                     }
 
-                    ToolTip.visible: hovered && !enabled
+                    ToolTip.visible: (hovered && !enabled) && !mainLogic.isRunning
                     ToolTip.delay: 100
                     ToolTip.text: "connetti la scheda prima di iniziare"
                 }
@@ -293,6 +299,8 @@ ApplicationWindow {
                     delay: 400
                     text: "Interrompi"
 
+                    enabled: mainLogic.isRunning
+
                     Layout.fillWidth: true
 
                     onActivated: {
@@ -305,7 +313,9 @@ ApplicationWindow {
 
         ScoreTable {
 
-            anchors.topMargin: 5
+            id: scoreTable
+
+            anchors.topMargin: 10
 
             anchors.right: controlPanel.left
             anchors.left: parent.left
@@ -313,7 +323,18 @@ ApplicationWindow {
             anchors.top: controlPanel.bottom
 
 
-            id: scoreTable
+        }
+
+        SavePanel {
+            id: savePanel
+
+            anchors.left: scoreTable.right
+            anchors.right: parent.right
+            anchors.top: controlPanel.bottom
+            anchors.bottom: parent.bottom
+
+            anchors.margins: 5
+            anchors.topMargin: 10
         }
 
     }

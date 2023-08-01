@@ -1,4 +1,4 @@
-#ifndef MAINLOGIC_H
+﻿#ifndef MAINLOGIC_H
 #define MAINLOGIC_H
 #include <QObject>
 #include <QThread>
@@ -8,6 +8,7 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QString>
+#include <savemanager.h>
 
 class MainLogic : public QObject
 {
@@ -26,6 +27,12 @@ class MainLogic : public QObject
     Q_PROPERTY(QString currentSerialPortDescription READ currentSerialPortDescription WRITE setCurrentSerialPortDescription NOTIFY currentSerialPortDescriptionChanged);
     Q_PROPERTY(QString scoreBoardText READ scoreBoardText WRITE setScoreBoardText NOTIFY scoreBoardTextChanged);
     Q_PROPERTY(bool isConnected READ isConnected WRITE setIsConnected NOTIFY isConnectedChanged);
+    Q_PROPERTY(bool isRunning READ isRunning WRITE setIsRunning NOTIFY isRunningChanged);
+    Q_PROPERTY(QString currentStimulationMode READ currentStimulationMode WRITE setCurrentStimulationMode NOTIFY currentStimulationModeChanged);
+
+    // names to display on listView
+
+    Q_PROPERTY(QList<QString> attemptNames READ attemptNames WRITE setAttemptNames NOTIFY attemptNamesChanged);
 
 
 
@@ -33,6 +40,7 @@ private:
     // variables
 
     MainLogicWorker *worker;
+    SaveManager saveManager;
 
     int lightNumber = 4;
     int startDelay_m = 3000;
@@ -45,6 +53,10 @@ private:
 
     bool m_noReps = false;
 
+    // used for currentAttemptName
+    int currentAttemptNum = 0;
+    QString currentAttemptName = "Tentativo 1";
+
     QList<QString> m_availableSerialPorts = {};
 
     QString m_currentSerialPort;
@@ -52,11 +64,18 @@ private:
 
     QString m_currentSerialPortDescription;
 
-    QString m_scoreBoardText;
+    QString m_scoreBoardText = "Prova 1 \n\nTentativo 1: 234ms\nTentativo2: 842ms\nTentativo 3: 922ms";
+    AttemptData currentAttempt;
 
     bool m_isConnected = false;
+    bool m_isRunning = false;
 
+    // prevent saving nothing by disabling the save button
+    //bool hasAtLeastOneAttempt = false;
 
+    QString m_currentStimulationMode;
+
+    QList<QString> m_attemptNames;
 
 public:
 
@@ -88,6 +107,16 @@ public:
     bool isConnected() const;
 
 
+
+
+    bool isRunning() const;
+    void setIsRunning(bool newIsRunning);
+
+    QString currentStimulationMode() const;
+
+    QList<QString> attemptNames() const;
+
+
 public slots:
     void startAttempts();
     void connectPort();
@@ -111,6 +140,21 @@ public slots:
     void clearScoreBoardText();
     void setIsConnected(bool newIsConnected);
     void stopAttempts() { worker->shallStop = true; }
+    void setCurrentStimulationMode(const QString newCurrentStimulationMode);
+    void setAttemptNames(const QList<QString> newAttemptNames);
+
+    // give all data about current attempt to saveManager
+    void saveAttempt(QList<int> attempts, int mean);
+    // save from qml
+    Q_INVOKABLE void saveAttemptText();
+    // ask saveManager to save everything to json
+    void saveAll();
+
+    // ask saveManager to get all mean in current file
+    Q_INVOKABLE QList<int> getMeans();
+
+    // save attempt and load text
+    Q_INVOKABLE void loadAttempt(int index);
 
 signals:
     void lightNumChanged(int value);
@@ -132,6 +176,9 @@ signals:
     void scoreBoardTextChanged(QString value);
     void isConnectedChanged(bool value);
 
+    void isRunningChanged(bool value);
+    void currentStimulationModeChanged(QString value);
+    void attemptNamesChanged(const QList<QString> value);
 };
 
 #endif // MAINLOGIC_H

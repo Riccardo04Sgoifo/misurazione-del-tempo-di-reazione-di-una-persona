@@ -38,9 +38,23 @@ private:
 
     bool isConnected = false;
 
+
+
+    // stores current attempts to be written on Json
+    QList<int> currentAttempts {0};
+
+    // stores the current mode, not using char beacause QJson doesn't like that
+    QString currentStimulationMode;
+
+// private methods
+
+    // do everything that needs to be done when you finish an attempt (lights off, save data..)
+    void attemptFinished();
+
+    // get data to send by serial
     QByteArray getMessage(char command, unsigned int from, unsigned int to, char mode, unsigned int attempts, unsigned int sensors);
 
-
+    char getStimulationModeForMessage();
 
 
 public:
@@ -52,14 +66,17 @@ public:
 
 
 public slots:
+
     void doWork();
+
     void setAttemptNum(int value);
     void setStartDelay(int value);
-
     void setRandomIntervalFrom(int value);
     void setRandomIntervalTo(int value);
     void setNoReps(bool newNoReps);
+    void setCurrentStimulationMode(QString value);
     void setCurrentSerialPort(QString value);
+
     void connectSerialPort();
     void updateAvailableSerialPorts();
 
@@ -82,6 +99,8 @@ signals:
 
     void isConnectedChanged(bool value);
 
+    void requestSaveAttempt(QList<int> attempts, int mean);
+    void isRunningChanged(bool value);
 
 };
 

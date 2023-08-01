@@ -9,6 +9,7 @@ list (
     SSpinBox.qml
     SCheckBox.qml
     STextEdit.qml
+    SReloadButton.qml
 )
 
 qt_add_qml_module(BasicLib

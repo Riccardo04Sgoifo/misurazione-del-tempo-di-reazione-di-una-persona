@@ -17,12 +17,15 @@ set (SOURCES
     main.cpp
     mainlogic.cpp
     mainlogicworker.cpp
+    savemanager.cpp
+
 )
 
 set (HEADERS
     mainlogic.h
     mainlogicworker.h
     macros.h
+    savemanager.h
 )
 
 qt6_add_resources(SHADER_RSC_ADDED
@@ -48,6 +51,7 @@ qt_add_qml_module(appReactionSpeed
         LightCanvas.qml
         TimingPanel.qml
         ScoreTable.qml
+        SavePanel.qml
 )
 
 qt6_add_shaders(appReactionSpeed "appReactionSpeed_shaders"
