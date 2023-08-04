@@ -48,6 +48,15 @@ void SaveManager::writeAttempt(AttemptData data, QString name, QString text)
 
 }
 
+void SaveManager::writeAttemptText(QString name, QString text)
+{
+    if (getIndex(&name) < 0){
+        return;
+    }
+
+    attemptTexts[getIndex(&name)] = text;
+}
+
 
 void SaveManager::removeAttempt(QString *name)
 {
@@ -114,6 +123,8 @@ void SaveManager::saveRun() // JSON
 
     QJsonObject object = getJson();
     saveFile.write(QJsonDocument(object).toJson());
+
+    qDebug() << "saved" << attemptNames;
 }
 
 

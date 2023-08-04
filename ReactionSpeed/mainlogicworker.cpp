@@ -134,16 +134,17 @@ void MainLogicWorker::attemptFinished()
 
     emit requestSaveAttempt(currentAttempts, (int)mean);
     // enables start button and disables stop button
-    emit isRunningChanged(true);
+    emit isRunningChanged(false);
 }
+
 
 char MainLogicWorker::getStimulationModeForMessage(){
 
 
-    if (QList<QString> {"Visual", "visual", "V", "v"}.indexOf(currentStimulationMode) >= 0 ){
+    if (QList<QString> {"Visual", "visual", "Visuale", "visuale", "V", "v"}.indexOf(currentStimulationMode) >= 0 ){
         return STIMULATION_MODE_VISUAL;
     }
-    if (QList<QString> {"Auditory", "auditory", "A", "a"}.indexOf(currentStimulationMode) >= 0 ){
+    if (QList<QString> {"Auditory", "auditory", "Auditiva", "auditiva", "A", "a"}.indexOf(currentStimulationMode) >= 0 ){
         return STIMULATION_MODE_VISUAL;
     }
 
@@ -154,9 +155,6 @@ char MainLogicWorker::getStimulationModeForMessage(){
 
 void MainLogicWorker::doWork()
 {
-
-    emit clearScoreBoardText();
-    emit appendScoreBoardTextLine("Tempi di reazione:\nProva 1:\n");
 
     // check if board is open
     if (!serial->isOpen()){
@@ -193,7 +191,7 @@ void MainLogicWorker::doWork()
     // everything went well up to here so the attempt is started
 
     // disables start button and enables stop button
-    emit isRunningChanged(false);
+    emit isRunningChanged(true);
 
     bool run = true;
     int i = 0;

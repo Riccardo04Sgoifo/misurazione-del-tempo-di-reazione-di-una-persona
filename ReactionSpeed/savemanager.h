@@ -126,6 +126,8 @@ public:
     void appendAttempt(AttemptData data, QString name, QString text);
     // add if it doesn't exists else overwrite it
     void writeAttempt(AttemptData data, QString name, QString text);
+    // overwrite the text but not the data
+    void writeAttemptText(QString name, QString text);
     void removeAttempt(QString *name); // remove by name
     void removeAttempt(int index); // remove by index
 

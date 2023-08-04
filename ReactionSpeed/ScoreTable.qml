@@ -43,8 +43,10 @@ Item {
             height: contentHeight
 
             onTextChanged: {
+
+                mainLogic.setScoreBoardText(text);
+
                 if (!focus){
-                    mainLogic.setScoreBoardText(text);
                     scrollView.ScrollBar.vertical.position = 1.0 - scrollView.ScrollBar.vertical.size;
                 }
                 else {
@@ -81,7 +83,7 @@ Item {
 
         radius: 10
 
-        color: "red"
+        color: "dark gray"
 
         // Mean
 
@@ -105,15 +107,19 @@ Item {
                 function reload() {
                     var lines = textEdit.text.split("\n");
 
+                    console.log(lines);
+
                     var sum = 0;
                     var count = 0;
 
                     for (var i = 1; i < lines.length; i++){ // first line is name
                         if (lines[i] !== ""){
-                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
-                            if (value !== NaN){
-                                sum += value;
-                                count ++;
+                            if (lines[i].split(":").length > 1){
+                                var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                                if (value !== NaN){
+                                    sum += value;
+                                    count ++;
+                                }
                             }
 
                         }
@@ -161,11 +167,14 @@ Item {
 
                     for (var i = 1; i < lines.length; i++){ // first line is name
                         if (lines[i] !== ""){
-                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
-                            if (value !== NaN){
-                                if (value >= meanTextField.mean * threshold){
-                                    count ++;
+                            if (lines[i].split(":").length > 1){
+                                var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                                if (value !== NaN){
+                                    if (value >= meanTextField.mean * threshold){
+                                        count ++;
+                                    }
                                 }
+
                             }
 
                         }
@@ -210,10 +219,12 @@ Item {
 
                     for (var i = 1; i < lines.length; i++){ // first line is name
                         if (lines[i] !== ""){
-                            var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
-                            if (value !== NaN){
-                                if (value < best){
-                                    best = value;
+                            if (lines[i].split(":").length > 1){
+                                var value = parseInt(lines[i].split(":")[1].replace(/\D/g, ''));
+                                if (value !== NaN){
+                                    if (value < best){
+                                        best = value;
+                                    }
                                 }
                             }
 

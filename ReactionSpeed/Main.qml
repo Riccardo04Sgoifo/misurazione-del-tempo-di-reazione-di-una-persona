@@ -270,9 +270,30 @@ ApplicationWindow {
 
             RowLayout {
 
-                id: noRepetitions
+                id: stimulationMode
 
                 anchors.top: lightNumPanel.bottom
+
+
+
+                SText {
+                    text: "Modalità di stimolazione"
+                }
+
+                ComboBox {
+                    model: ["Visuale", "Auditiva", "Combinata"]
+
+                    onCurrentIndexChanged: {
+                        mainLogic.setCurrentStimulationMode(currentText);
+                    }
+                }
+            }
+
+            RowLayout {
+
+                id: noRepetitions
+
+                anchors.top: stimulationMode.bottom
 
 
 

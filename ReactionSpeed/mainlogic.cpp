@@ -70,6 +70,7 @@ MainLogic::MainLogic()
     connect(worker, &MainLogicWorker::currentSerialPortsDescriptionChanged, this, &MainLogic::setCurrentSerialPortDescription);
     connect(this, &MainLogic::currentSerialPortChanged, worker, &MainLogicWorker::setCurrentSerialPort);
     connect(this, &MainLogic::connectPortSignal, worker, &MainLogicWorker::connectSerialPort);
+    connect(this, &MainLogic::startDelayChanged, worker, &MainLogicWorker::setStartDelay);
     connect(this, &MainLogic::requestUpdateAvailableSerialPortsSignal, worker, &MainLogicWorker::updateAvailableSerialPorts);
     connect(worker, &MainLogicWorker::requestOpenErrorDialog, this, &MainLogic::requestOpenErrorDialog);
     connect(worker, &MainLogicWorker::appendScoreBoardTextLine, this, &MainLogic::appendScoreBoardTextLine);
@@ -79,11 +80,13 @@ MainLogic::MainLogic()
     connect(worker, &MainLogicWorker::requestSaveAttempt, this, &MainLogic::saveAttempt);
     connect(&saveManager, &SaveManager::attemptNamesChanged, this, &MainLogic::setAttemptNames);
     connect(this, &MainLogic::attemptNamesChanged, &saveManager, &SaveManager::setAttemptNames);
+    connect(this, &MainLogic::currentStimulationModeChanged, worker, &MainLogicWorker::setCurrentStimulationMode);
 
     //connect worker output signal and this slopt handler
     workerThread.start();
 
     // update qml stuff
+
 }
 
 MainLogic::~MainLogic()
@@ -99,7 +102,17 @@ void MainLogic::startAttempts()
 
     // starts from 0 so first is 1
     currentAttemptNum++;
-    currentAttemptName = QString("Tentativo %1").arg(currentAttemptNum);
+    currentAttemptName = QString("Prova %1").arg(currentAttemptNum);
+
+    // adds name to save manager by saving a blank attempt
+
+    saveManager.writeAttempt(AttemptData(), currentAttemptName, currentAttemptName);
+    // update attemptNames
+    emit attemptNamesChanged(m_attemptNames);
+    // clear score board
+    clearScoreBoardText();
+    // write name on scoreBoard
+    appendScoreBoardTextLine(currentAttemptName + "\n");
 
     emit startAttemptsSignal();
 }
@@ -232,7 +245,7 @@ void MainLogic::saveAttemptText()
 
     saveManager.writeAttempt(currentAttempt, currentAttemptName, m_scoreBoardText);
 
-    emit attemptNamesChanged(QList<QString> {"papa leone", "amerigo vespucci", "cristofolo colombo"});
+    //emit attemptNamesChanged(QList<QString> {"papa leone", "amerigo vespucci", "cristofolo colombo"});
 
 }
 
@@ -248,6 +261,22 @@ QList<int> MainLogic::getMeans()
 
 void MainLogic::loadAttempt(int index)
 {
+    if (index >= m_attemptNames.size()){
+        return;
+        qDebug() << "index out of bounds for attemptNames during loadAttempt call";
+    }
+
+    // save current data
+
+    saveManager.writeAttemptText(currentAttemptName, m_scoreBoardText);
+
+    // load new one
+    currentAttemptName = m_attemptNames[index];
+    // attempt data is not set as it's useless and could only cause more bugs
+    m_scoreBoardText = saveManager.getText(index);
+
+    emit scoreBoardTextChanged(m_scoreBoardText);
+
     return;
 }
 

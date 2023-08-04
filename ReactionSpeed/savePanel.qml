@@ -23,7 +23,7 @@ Item {
 
         id: listSection
 
-        color: "green"
+        color: "dark gray"
         radius: 5
         anchors.left: parent.left
         anchors.right: parent.right
@@ -72,8 +72,8 @@ Item {
             highlightFollowsCurrentItem: true
 
             onCurrentIndexChanged: {
-                //mainLogic.loadAttempt(currentItem.name)
-                //console.log(currentItem)
+                mainLogic.loadAttempt(currentIndex);
+                console.log(currentIndex)
             }
         }
 
@@ -107,7 +107,7 @@ Item {
 
         onClicked: {
             mainLogic.saveAttemptText();
-            //mainLogic.saveAll();
+            mainLogic.saveAll();
         }
     }
 
