@@ -263,6 +263,7 @@ void MainLogicWorker::doWork()
         }
 
         else if (dataReceived[0] == FINISHED){
+            qDebug() << "received finish signal";
             run = false;
             emit appendScoreBoardTextLine(QString("finish"));
         }

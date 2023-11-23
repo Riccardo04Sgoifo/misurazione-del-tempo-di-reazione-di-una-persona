@@ -74,7 +74,7 @@ Item {
     Rectangle {
         id: statisticsPanel
 
-        width: 200
+        width: 300
 
         //anchors.left: scrollView.right
         anchors.top: parent.top
@@ -99,6 +99,10 @@ Item {
             TextField {
 
                 id: meanTextField
+
+                anchors.right: meanReloadButton.left
+                anchors.left: parent.left
+                anchors.margins: 5
 
                 text: "Media: 234ms"
 
@@ -132,10 +136,16 @@ Item {
                 ToolTip.visible: hovered
                 ToolTip.delay: 500
                 ToolTip.text: "Media calcolata a partire dalla riga 2"
+
+
             }
 
 
             SReloadButton {
+                id: meanReloadButton
+                anchors.right: parent.right
+                anchors.margins: 5
+
                 target: meanTextField
             }
 
@@ -155,6 +165,10 @@ Item {
             TextField {
 
                 id: errorTextField
+
+                anchors.right: errorReloadButton.left
+                anchors.left: parent.left
+                anchors.margins: 5
 
                 text: "Errori: 3"
 
@@ -191,6 +205,10 @@ Item {
 
             SReloadButton {
                 target: errorTextField
+
+                id: errorReloadButton
+                anchors.right: parent.right
+                anchors.margins: 5
             }
 
         }
@@ -209,6 +227,10 @@ Item {
             TextField {
 
                 id: bestTimeTextField
+
+                anchors.right: bestTimeReloadButton.left
+                anchors.left: parent.left
+                anchors.margins: 5
 
                 text: "Tempo migliore: 125ms"
 
@@ -243,6 +265,10 @@ Item {
 
             SReloadButton {
                 target: bestTimeTextField
+
+                id: bestTimeReloadButton
+                anchors.right: parent.right
+                anchors.margins: 5
             }
 
         }
@@ -262,7 +288,11 @@ Item {
 
                 id: topPTextField
 
-                text: "percentuale miglire: 51%"
+                anchors.right: topPReloadButton.left
+                anchors.left: parent.left
+                anchors.margins: 5
+
+                text: "Percentuale migliore: 51%"
 
                 function reload() {
 
@@ -300,6 +330,10 @@ Item {
 
             SReloadButton {
                 target: topPTextField
+
+                id: topPReloadButton
+                anchors.right: parent.right
+                anchors.margins: 5
             }
 
         }
