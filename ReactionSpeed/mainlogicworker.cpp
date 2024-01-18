@@ -142,14 +142,14 @@ char MainLogicWorker::getStimulationModeForMessage(){
 
 
     if (QList<QString> {"Visual", "visual", "Visuale", "visuale", "V", "v"}.indexOf(currentStimulationMode) >= 0 ){
-        return STIMULATION_MODE_VISUAL;
+        return VISUAL_MODE;
     }
     if (QList<QString> {"Auditory", "auditory", "Auditiva", "auditiva", "A", "a"}.indexOf(currentStimulationMode) >= 0 ){
-        return STIMULATION_MODE_VISUAL;
+        return AUDIO_MODE;
     }
 
     // default
-    return STIMULATION_MODE_BOTH;
+    return COMBINED_MODE;
 
 }
 
@@ -166,7 +166,9 @@ void MainLogicWorker::doWork()
 
     QThread::msleep(startDelay);
 
-    const QByteArray dataToSendBytes = getMessage(START_LOOP, randomIntervalFrom, randomIntervalTo, getStimulationModeForMessage(), attemptNum, 1u);
+    serial->readAll();
+
+    const QByteArray dataToSendBytes = getMessage(START_LOOP, randomIntervalFrom, randomIntervalTo, getStimulationModeForMessage(), attemptNum, lightNum);
 
     serial->write(dataToSendBytes);
 
@@ -231,21 +233,35 @@ void MainLogicWorker::doWork()
         if (serial->bytesAvailable() <= 0){
             if (!serial->waitForReadyRead(10000)){
                 emit requestOpenErrorDialog("Time out while waiting for a response");
+                qDebug() << (QString(serial->readAll()));
             }
         }
 
+        qDebug() << "WHATTTT";
 
         dataReceived = serial->read(1);
 
+        qDebug() << QString("command is %1").arg(dataReceived[0]);
+
         if (dataReceived[0] == REACTION_TIME_PRINT) {
-            dataReceived = QByteArray();
+            qDebug() << "Into the loop...";
             while (serial->bytesAvailable() < REACTION_TIME_MESSAGE_LENGTH - 1) { } // wait for 4 bytes (reaction time unsigned int)
-            dataReceived = serial->read(REACTION_TIME_MESSAGE_LENGTH - 1);
+            qDebug() << "Out of the loop!";
+            QByteArray dataReceived = serial->read(REACTION_TIME_MESSAGE_LENGTH - 1);
+            qDebug() << dataReceived[0];
+            qDebug() << dataReceived[1];
+            qDebug() << dataReceived[2];
+            qDebug() << dataReceived[3];
 
             unsigned char *dr = new unsigned char[REACTION_TIME_MESSAGE_LENGTH - 1];
-            std::memcpy(dr, dataReceived.constData(), REACTION_TIME_MESSAGE_LENGTH - 1); // using the QByteArray gives 0xffffff.. for numbers lower than 0xff ?
+            std::memcpy(dr, dataReceived.constData(), REACTION_TIME_MESSAGE_LENGTH - 1); // using the QByteArray gives 0xffffff.. for numbers lower than 0xff ?*/
 
-            unsigned int reactionTime = 0;
+            //char *dr = new char[REACTION_TIME_MESSAGE_LENGTH - 1] {0};
+            //qDebug() << "reaction time:";
+
+            //qDebug() << serial->read(dr, REACTION_TIME_MESSAGE_LENGTH - 1);
+
+            uint32_t reactionTime = 0u;
 
             reactionTime |= dr[0];
             reactionTime <<= 8;
@@ -282,12 +298,26 @@ void MainLogicWorker::doWork()
 
             emit lightChanged((int) activeSensor);
         }
+
+        else{
+            qDebug() << QString("Unrecognized command %1").arg(dataReceived[0]);
+            qDebug() << (QString(serial->readAll()));
+        }
     }
 
     // tell mainLogic that the attempt is finished
     attemptFinished();
 
 
+}
+
+void MainLogicWorker::setLightNum(int value)
+{
+    if (lightNum != value) {
+        lightNum = value;
+        emit lightNumChanged(value);
+
+    }
 }
 
 void MainLogicWorker::setAttemptNum(int value)

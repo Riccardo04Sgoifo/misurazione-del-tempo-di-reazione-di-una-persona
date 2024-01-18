@@ -102,7 +102,7 @@ QJsonObject SaveManager::getJson()
         jsonSingleAttempt["AttemptText"] = attemptTexts[i];
 
         // add to main array
-        attemptJsonArray.append(jsonSingleAttempt);
+        //attemptJsonArray.append(jsonSingleAttempt);
     }
 
 

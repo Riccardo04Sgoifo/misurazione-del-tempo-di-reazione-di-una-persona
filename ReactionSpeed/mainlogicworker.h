@@ -19,6 +19,8 @@ class MainLogicWorker : public QObject
 {
     Q_OBJECT
 private:
+
+    int lightNum = 4;
     int startDelay = 3000;
     int attemptNum = 10;
 
@@ -69,6 +71,7 @@ public slots:
 
     void doWork();
 
+    void setLightNum(int value);
     void setAttemptNum(int value);
     void setStartDelay(int value);
     void setRandomIntervalFrom(int value);
@@ -84,6 +87,7 @@ public slots:
 
 
 signals:
+    void lightNumChanged(int value);
     void lightChanged(int value);
     void attemptNumChanged(int value);
     void startDelayChanged(int value);

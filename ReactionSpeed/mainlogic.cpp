@@ -81,6 +81,7 @@ MainLogic::MainLogic()
     connect(&saveManager, &SaveManager::attemptNamesChanged, this, &MainLogic::setAttemptNames);
     connect(this, &MainLogic::attemptNamesChanged, &saveManager, &SaveManager::setAttemptNames);
     connect(this, &MainLogic::currentStimulationModeChanged, worker, &MainLogicWorker::setCurrentStimulationMode);
+    connect(this, &MainLogic::lightNumChanged, worker, &MainLogicWorker::setLightNum);
 
     //connect worker output signal and this slopt handler
     workerThread.start();

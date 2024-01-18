@@ -4,7 +4,9 @@ project(ReactionSpeed VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Quick ShaderTools SerialPort)
+set(CMAKE_PREFIX_PATH "C:/Qt/6.5.1/mingw_64/lib/cmake/Qt6")
+
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick ShaderTools SerialPort)
 
 qt_standard_project_setup()
 

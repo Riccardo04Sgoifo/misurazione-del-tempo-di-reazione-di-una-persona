@@ -10,6 +10,11 @@
 #define STIMULATION_MODE_BOTH 'b'
 #define STIMULATION_MODE_VISUAL 'v'
 #define STIMULATION_MODE_AUDITORY 'a'
+//for comunication with esp
+#define COMBINED_MODE 0u  /* both audio and visual */
+#define VISUAL_MODE 1u    /* use LEDs */
+#define AUDIO_MODE 2u     /* use buzzer */
+
 #define ACTIVE_SENSOR 'l'
 
 #define REACTION_TIME_MESSAGE_LENGTH 5
