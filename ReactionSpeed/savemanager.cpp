@@ -33,8 +33,6 @@ void SaveManager::writeAttempt(AttemptData data, QString name, QString text)
     int index = getIndex(&name);
 
 
-
-
     if (index < 0) {
 
         // attempt doesn't exist
@@ -102,7 +100,7 @@ QJsonObject SaveManager::getJson()
         jsonSingleAttempt["AttemptText"] = attemptTexts[i];
 
         // add to main array
-        //attemptJsonArray.append(jsonSingleAttempt);
+        attemptJsonArray.append(jsonSingleAttempt);
     }
 
 
@@ -114,18 +112,24 @@ QJsonObject SaveManager::getJson()
 
 void SaveManager::saveRun() // JSON
 {
-    QFile saveFile("save.json");
+    emit requestFolderDialog();
 
-    if (!saveFile.open(QIODevice::WriteOnly)){
+}
+void SaveManager::saveRunFile(QUrl saveFile) // JSON
+{
+    QString pathName = saveFile.toLocalFile();
+    QFile saveFilePath(pathName);
+    if (!saveFilePath.open(QIODevice::WriteOnly)){
         qDebug() << "cuold not open save file";
         return;
     }
 
     QJsonObject object = getJson();
-    saveFile.write(QJsonDocument(object).toJson());
+    saveFilePath.write(QJsonDocument(object).toJson());
 
-    qDebug() << "saved" << attemptNames;
+    qDebug() << "saved" << attemptNames << "to path " << pathName;
 }
+
 
 
 QString SaveManager::getText(QString *name)
@@ -173,5 +177,6 @@ void SaveManager::setAttemptNames(QList<QString> value)
         return;
     }
     attemptNames = value;
+
     emit attemptNamesChanged(value);
 }

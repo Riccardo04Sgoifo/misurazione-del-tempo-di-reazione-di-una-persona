@@ -77,6 +77,7 @@ private:
 
     QList<QString> m_attemptNames;
 
+
 public:
 
     int lightNum() const {return lightNumber; }
@@ -117,6 +118,7 @@ public:
     QList<QString> attemptNames() const;
 
 
+
 public slots:
     void startAttempts();
     void connectPort();
@@ -134,6 +136,8 @@ public slots:
     void setCurrentSerialPortDescription(const QString newCurrentSerialPortDescription);
 
     void requestOpenErrorDialog(QString error) {emit errorDialogRequested(error); }
+    void requestOpenFolderDialog() {emit folderDialogRequested();}
+    void requestSaveRunFile(QUrl filePath) {emit saveRunFile(filePath);};
 
     void setScoreBoardText(const QString newScoreBoardText);
     void appendScoreBoardTextLine(const QString line);
@@ -142,6 +146,7 @@ public slots:
     void stopAttempts() { worker->shallStop = true; }
     void setCurrentStimulationMode(const QString newCurrentStimulationMode);
     void setAttemptNames(const QList<QString> newAttemptNames);
+
 
     // give all data about current attempt to saveManager
     void saveAttempt(QList<int> attempts, int mean);
@@ -173,6 +178,8 @@ signals:
     void currentSerialPortDescriptionChanged(QString value);
 
     void errorDialogRequested(QString error);
+    void folderDialogRequested();
+    void saveRunFile(QUrl filePath);
     void scoreBoardTextChanged(QString value);
     void isConnectedChanged(bool value);
 

@@ -148,12 +148,15 @@ public slots:
 
     // used to modify from qml
     void setAttemptNames(const QList<QString> value);
+    void saveRunFile(QUrl saveFile);
 
     QString getName(int index);
 
 signals:
 
     void attemptNamesChanged(const QList<QString> neams);
+
+    void requestFolderDialog();
 
 };
 

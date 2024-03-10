@@ -73,6 +73,8 @@ MainLogic::MainLogic()
     connect(this, &MainLogic::startDelayChanged, worker, &MainLogicWorker::setStartDelay);
     connect(this, &MainLogic::requestUpdateAvailableSerialPortsSignal, worker, &MainLogicWorker::updateAvailableSerialPorts);
     connect(worker, &MainLogicWorker::requestOpenErrorDialog, this, &MainLogic::requestOpenErrorDialog);
+    connect(&saveManager, &SaveManager::requestFolderDialog, this, &MainLogic::requestOpenFolderDialog);
+    connect(this, &MainLogic::saveRunFile, &saveManager, &SaveManager::saveRunFile);
     connect(worker, &MainLogicWorker::appendScoreBoardTextLine, this, &MainLogic::appendScoreBoardTextLine);
     connect(worker, &MainLogicWorker::clearScoreBoardText, this, &MainLogic::clearScoreBoardText);
     connect(worker, &MainLogicWorker::isConnectedChanged, this, &MainLogic::setIsConnected);

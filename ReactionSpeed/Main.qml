@@ -5,6 +5,7 @@ import QtQuick.Controls.Fusion
 import QtQuick.Layouts
 import QtQuick.Effects
 import Basic
+import QtQuick.Dialogs
 
 ApplicationWindow {
     id: mainWindow
@@ -26,6 +27,10 @@ ApplicationWindow {
         target: mainLogic;
         function onErrorDialogRequested(error) {
             errorDialog.openDialog(error);
+        }
+
+        function onFolderDialogRequested() {
+            folderDialog.openDialog();
         }
     }
 
@@ -131,6 +136,23 @@ ApplicationWindow {
         onAccepted: {
             mainLogic.connectPort();
         }
+    }
+
+    FileDialog {
+        id: folderDialog
+        function openDialog() {
+            open();
+        }
+
+        fileMode: FileDialog.SaveFile
+
+        onAccepted: {
+            mainLogic.saveRunFile(selectedFile);
+        }
+
+        nameFilters: ["Json files (*.json)"]
+
+
     }
 
     Item {

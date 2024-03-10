@@ -275,7 +275,7 @@ Item {
 
         // Top percentage
 
-        RowLayout {
+        /*RowLayout {
 
             id: topPDisplay
             anchors.margins: 5
@@ -336,7 +336,7 @@ Item {
                 anchors.margins: 5
             }
 
-        }
+        }*/
 
     }
 }

@@ -1,5 +1,4 @@
 
-
 void readInstructionMessage(uint8_t buffer[INSTRUCTION_MESSAGE_LENGTH], uint8_t* command, uint32_t* intervalFrom, uint32_t* intervalTo, uint8_t* mode, uint32_t* attemptNum, uint32_t* sensorNum){
 // read from buffer
 
@@ -48,18 +47,23 @@ uint8_t* getReactionTimeMessage(uint32_t reactionTime){
 void getActiveSensors(){
 
   for (int i = 0; i < MAX_SENSORS; i++){
-    sensorStates[i] = true;
+    sensorStates[i] = false;
+    // if a response is not received, the state will stay "offline"
     esp_now_send(addresses[i].address, (uint8_t * ) &checkMessage, sizeof(checkMessage));
-
-    for(int j = 0; j < 6; j++){
-      Serial.print(addresses[i].address[j]);
-      Serial.print(".");
-    }
-    //--------------------------------------------------------------------------------------------------------------------DEBUG 
-    Serial.println("has been tried");//--------------------------------------------------------------------------------------------------------------------DEBUG 
-    delay(20);
+    
   }
-  delay(500);
+
+  // sensors should respond in less than 1ms so 20ms is way more than enough time
+  // this delay also avoids led flickering
+  delay(20);
+
+  //for (int i = 0; i < MAX_SENSORS; i++){
+  //  Serial.print("sensor ");
+  //  Serial.print(i);
+  //  Serial.print(" is ");
+  //  Serial.println(sensorStates[i] ? "online" : "offline");
+  //}
+  
 }
 
 
@@ -84,6 +88,10 @@ void updateSensorStatus(uint8_t* mac_address, bool status){
     for (int j = 0; j < 6; j++){
       if (addresses[i].address[j] != mac_address[j]){
         same = false;
+        //Serial.print(addresses[i].address[j], HEX);
+        //Serial.print(" is not the same as ");
+        //Serial.println(mac_address[j], HEX);
+
       }
     }
       

@@ -12,7 +12,7 @@ Item {
             console.log(names[0])
 
             for (let i = 0; i < Object.keys(names).length; i++){
-                scoreListView.model.append({"name" :   names[i]/*names[i]*/, "mean" : "100ms"})
+                scoreListView.model.append({"name" :   names[i]/*names[i]*//*, "mean" : "100ms"*/})
             }
 
 
@@ -38,7 +38,7 @@ Item {
                 height: 40
                 Column {
                     Text { text: '<b>Nome:</b> ' + name }
-                    Text { text: '<b>Media:</b> ' + mean }
+                    //Text { text: '<b>Media:</b> ' + mean }
                 }
             }
         }
@@ -52,15 +52,15 @@ Item {
             model: ListModel {
                 ListElement {
                     name: "Urpo Settimo"
-                    mean: "243ms"
+                    //mean: "243ms"
                 }
                 ListElement {
                     name: "Luigi Quattordicesimo"
-                    mean: "1430ms"
+                   // mean: "1430ms"
                 }
                 ListElement {
                     name: "Papa Francesco"
-                    mean: "2ms"
+                    //mean: "2ms"
                 }
             }
 
