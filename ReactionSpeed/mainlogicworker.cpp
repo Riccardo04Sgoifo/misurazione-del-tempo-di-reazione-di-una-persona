@@ -296,7 +296,7 @@ void MainLogicWorker::doWork()
 
             delete[] msg;
 
-            emit lightChanged((int) activeSensor);
+            emit lightChanged((int) activeSensor + 1);
         }
 
         else{

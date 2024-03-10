@@ -1,7 +1,8 @@
 
 #include <ESP8266WiFi.h>
 #include <espnow.h>
-#include <ESP8266TrueRandom.h>
+//#include <EEPROM.h>
+
 
 
 #define COMBINED_MODE 0u
@@ -82,7 +83,19 @@ struct_message dataToSend;
 struct_message breakMessage { STIMULATION_MODE_VISUAL, false, true, false };
 struct_message checkMessage { STIMULATION_MODE_VISUAL, false, false, true };
 
+// random number generation
 
+//uint32_t random_seed = 12;
+//
+//
+//
+//
+//uint32_t nextrandom()
+//{
+//  random_seed = (random_seed * 1103515245 + 12345) % 0x7FFFFFFF;
+//  random_seed <<= 7;
+//  return random_seed;
+//}
 
 // start the measuring cycles
 void startLoop(){
@@ -114,6 +127,9 @@ void runLoop(){
     //Serial.print("what the urpidurpiduppi");
     Serial.write(FINISHED);
 
+    //EEPROM.put(0, random_seed);  // save current random number for next time
+    //EEPROM.commit();
+
     return;
   }
   
@@ -121,10 +137,10 @@ void runLoop(){
   uint8_t randomSensor = 0;
 
   //just get the first available for testing
-
+  /*randomSensor = MAX_SENSORS % nextrandom();
   randomSensor = 0;
 
-  /*while(!sensorStates[randomSensor]){
+  while(!sensorStates[randomSensor]){
     randomSensor += 1;
     if (randomSensor >= MAX_SENSORS){
       //Serial.print("what the bekceckcks");
@@ -134,12 +150,12 @@ void runLoop(){
     }
   }*/
 
+
   bool found = false;
-  int timeout = 500; // after this many trials finished is returned and leds are blinked 2 times
+  int timeout = 70; // after this many trials finished is returned and leds are blinked 2 times
   while (!found){
     timeout -= 1;
-    yield();
-    randomSensor = ESP8266TrueRandom.random(sensorNum);
+    randomSensor =  random(0, MAX_SENSORS);//nextrandom() % MAX_SENSORS;
 
     if (sensorStates[randomSensor]){
       found = true;
@@ -155,17 +171,20 @@ void runLoop(){
         digitalWrite(LED3, blinking_warning_state);
         digitalWrite(LED4, blinking_warning_state);
 
+        delay(1000);
+
         blinking_warning_state = !blinking_warning_state;
       }
-      
+      return;
     }
+    
   }
 
   last_used_sensor = randomSensor;
   
 
   // get the randomized interval to wait
-  uint32_t randomDelay = ESP8266TrueRandom.random(intervalFrom, intervalTo + 1);
+  uint32_t randomDelay = random(intervalFrom, intervalTo + 1);//intervalFrom + nextrandom() % (intervalTo + 1 - intervalFrom);//ESP8266TrueRandom.random(intervalFrom, intervalTo + 1);
   // and wait
   delay(randomDelay);
 
@@ -279,8 +298,14 @@ void setup() {
   pinMode(LED3, OUTPUT);
   pinMode(LED4, OUTPUT);
 
+  // get random number seed
+ // EEPROM.begin(sizeof(random_seed)); // Set aside some memory
+ // EEPROM.get(0, random_seed); // Gets data from address 0
+
   // first update of old time to prevent strange values on dt
   old_time = millis();
+
+  
 }
 
 
@@ -331,6 +356,7 @@ void loop() {
 
     if (command == START_LOOP){
       // tell the computer the message has been received and executed
+      randomSeed(millis());
       Serial.print(COPY);
       startLoop();
     }

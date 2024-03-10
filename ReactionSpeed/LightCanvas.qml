@@ -33,7 +33,7 @@ Rectangle {
         drawingCanvas.requestPaint();
     }
 
-    Canvas {
+    /*Canvas {
 
         id: drawingCanvas
         anchors.fill: parent
@@ -56,7 +56,7 @@ Rectangle {
 
         }
 
-    }
+    }*/
 
     ShaderEffect {
         anchors.fill: parent
