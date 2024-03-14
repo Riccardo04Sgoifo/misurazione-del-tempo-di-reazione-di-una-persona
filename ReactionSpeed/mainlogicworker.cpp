@@ -296,7 +296,7 @@ void MainLogicWorker::doWork()
 
             delete[] msg;
 
-            emit lightChanged((int) activeSensor + 1);
+            emit lightChanged((int) activeSensor + 1); // removing one the second light was mapped to the first, the third to the second...
         }
 
         else{
