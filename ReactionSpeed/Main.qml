@@ -303,9 +303,9 @@ ApplicationWindow {
                 }
 
                 ComboBox {
-                    model: ["Visuale", "Auditiva", "Combinata"]
+                    model: ["Combinata", "Visuale", "Auditiva"]
 
-                    onCurrentIndexChanged: {
+                    onHighlightedIndexChanged : {
                         mainLogic.setCurrentStimulationMode(currentText);
                     }
                 }

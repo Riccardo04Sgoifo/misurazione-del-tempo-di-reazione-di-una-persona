@@ -351,6 +351,8 @@ void loop() {
 
     // write all new received parameters to local variables
     readInstructionMessage(buffer, &command, &intervalFrom, &intervalTo, &mode, &attemptNum, &sensorNum);
+
+    dataToSend.stimulationMode = mode;
     
     // start loop
 

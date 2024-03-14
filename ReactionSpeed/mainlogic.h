@@ -64,7 +64,7 @@ private:
 
     QString m_currentSerialPortDescription;
 
-    QString m_scoreBoardText = "Prova 1 \n\nTentativo 1: 234ms\nTentativo2: 842ms\nTentativo 3: 922ms";
+    QString m_scoreBoardText = "Prova 1\n\n";
     AttemptData currentAttempt;
 
     bool m_isConnected = false;

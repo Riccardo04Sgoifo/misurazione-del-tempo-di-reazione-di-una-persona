@@ -102,10 +102,10 @@ QByteArray MainLogicWorker::getMessage(char command, unsigned int from, unsigned
     data[2] |= (from & 0x00ff0000) >> 16;
     data[1] |= (from & 0xff000000) >> 24;
 
-    data[8] |= from & 0x000000ff;
-    data[7] |= (from & 0x0000ff00) >> 8;
-    data[6] |= (from & 0x00ff0000) >> 16;
-    data[5] |= (from & 0xff000000) >> 24;
+    data[8] |= to & 0x000000ff;
+    data[7] |= (to & 0x0000ff00) >> 8;
+    data[6] |= (to & 0x00ff0000) >> 16;
+    data[5] |= (to & 0xff000000) >> 24;
 
     data[9] |= mode;
 

@@ -51,17 +51,17 @@ Item {
 
             model: ListModel {
                 ListElement {
-                    name: "Urpo Settimo"
+                    name: ""
                     //mean: "243ms"
                 }
-                ListElement {
+                /*ListElement {
                     name: "Luigi Quattordicesimo"
                    // mean: "1430ms"
                 }
                 ListElement {
                     name: "Papa Francesco"
                     //mean: "2ms"
-                }
+                }*/
             }
 
             delegate: scoreDelegate

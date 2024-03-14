@@ -104,7 +104,7 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: 5
 
-                text: "Media: 234ms"
+                text: "Media:"
 
                 property int mean: 0
 
@@ -170,7 +170,7 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: 5
 
-                text: "Errori: 3"
+                text: "Errori:"
 
                 function reload() {
                     var lines = textEdit.text.split("\n");
@@ -232,7 +232,7 @@ Item {
                 anchors.left: parent.left
                 anchors.margins: 5
 
-                text: "Tempo migliore: 125ms"
+                text: "Tempo migliore:"
 
                 function reload() {
                     var lines = textEdit.text.split("\n");

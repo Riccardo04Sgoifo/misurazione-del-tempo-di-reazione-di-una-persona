@@ -16,7 +16,7 @@ Rectangle {
 
 
 
-    ColorAnimation on circleColor {
+    /*ColorAnimation on circleColor {
         id: colorAnimation;
         running: false;
         duration: 300;
@@ -31,7 +31,7 @@ Rectangle {
     onCurrentLightChanged: {
         colorAnimation.restart();
         drawingCanvas.requestPaint();
-    }
+    }*/
 
     /*Canvas {
 
